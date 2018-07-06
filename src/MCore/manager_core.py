@@ -14,7 +14,19 @@ class Manager(object):
 
 
 class Backlog(object):
-    pass
+    '''
+    '''
+    def __init__(self):
+        self.task_dict = {}
+
+    def get_task(self, name):
+        return self.task_dict[name]
+
+    def add_task(self, name):
+        self.task_dict[name] = Task(name)
+
+    def remove_task(self, name):
+        del self.task_dict[name]
 
 
 class Task(object):
@@ -22,7 +34,7 @@ class Task(object):
         Instance of task which are used to present one task in the backlog
     '''
     def __init__(self, name):
-        self._task_name = name
+        self.task_name = name
         self._state = TaskStates.PROPOSED
         self._proposed_date = datetime.now()
         self._start_date = None
@@ -37,6 +49,9 @@ class Task(object):
 
     def mark_task_done(self):
         self._change_state(TaskStates.DONE, self._done_date)
+
+    def __str__(self):
+        return self.task_name
 
 
 class TaskStates(Enum):
