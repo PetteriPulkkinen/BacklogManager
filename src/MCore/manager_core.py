@@ -50,7 +50,7 @@ class Task(object):
         self._change_state(TaskStates.STARTED, self._start_date)
 
     def mark_task_done(self):
-        self._change_state(TaskStates.DONE, self._done_date)
+        self._change_state(TaskStates.DONE, self._done_dgit ate)
 
     def __str__(self):
         return self.task_name + ":" + str(self._state)
