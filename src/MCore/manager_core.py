@@ -10,11 +10,13 @@ from datetime import datetime
 
 
 class Manager(object):
-    pass
+    def __init__(self):
+        self.backlog = Backlog()
 
 
 class Backlog(object):
     '''
+        Backlog is a container class for the tasks.
     '''
     def __init__(self):
         self.task_dict = {}
@@ -22,8 +24,8 @@ class Backlog(object):
     def get_task(self, name):
         return self.task_dict[name]
 
-    def add_task(self, name):
-        self.task_dict[name] = Task(name)
+    def add_task(self, task):
+        self.task_dict[task.task_name] = task
 
     def remove_task(self, name):
         del self.task_dict[name]
@@ -51,7 +53,7 @@ class Task(object):
         self._change_state(TaskStates.DONE, self._done_date)
 
     def __str__(self):
-        return self.task_name
+        return self.task_name + ":" + str(self._state)
 
 
 class TaskStates(Enum):
