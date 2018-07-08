@@ -8,39 +8,33 @@
 from enum import Enum
 from datetime import datetime
 
-class Manager(object):
-    def __init__(self):
-        super(Manager,self).__init__()
-        self.backlog = Backlog()
-
 
 class Backlog(object):
     '''
         Backlog is a container class for the tasks.
     '''
     def __init__(self):
-        self.task_dict = {}
+        self.state_dict = {TaskState.PROPOSED : {}, TaskState.STARTED : {}, 
+        TaskState.DONE : {}}
 
-    def get_task(self, name):
-        return self.task_dict[name]
+    def getTask(self, name):
+        for key, task_dict in self.state_dict.items():
+            if name in task_dict:
+                return task_dict[name]
+        return None
 
-    def add_task(self, task):
-        self.task_dict[task.task_name] = task
+    def addTask(self, task):
+        self.state_dict[task.state] = {task.name : task}
+        print("Add task")
 
-    def remove_task(self, name):
-        del self.task_dict[name]
+    def removeTask(self, name):
+        for key, task_dict in self.state_dict:
+            del task_dict[name]
 
-    def print_items(self):
-        for i in self.task_dict.items():
-            print(i[1])
-
-    def get_all_states(self):
-        states = {}
-        for item in task_dict.items():
-            states[item[0]] = item[1].get_state()
-
-        return states
-
+    def printItems(self):
+        for key, task_dict in self.state_dict.items():
+            for key, task in task_dict.items():
+                print(task)
 
 
 class Task(object):
@@ -48,48 +42,48 @@ class Task(object):
         Instance of task which are used to present one task in the backlog
     '''
     def __init__(self, name):
-        self.task_name = name
-        self._state = TaskState.PROPOSED
+        self.name = name
+        self.state = TaskState.PROPOSED
         self._proposed_date = datetime.now()
         self._start_date = None
         self._done_date = None
 
-    def propose_task(self):
-        self._state = TaskState.PROPOSED
+    def proposeTask(self):
+        self.state = TaskState.PROPOSED
         self._proposed_date = datetime.now()
         self._start_date = None
         self._done_date = None
 
-    def start_task(self):
-        self._state = TaskState.STARTED
+    def startTask(self):
+        self.state = TaskState.STARTED
         self._start_date = datetime.now()
         self._done_date = None
 
-    def finish_task(self):
-        self._state = TaskState.DONE
+    def finishTask(self):
+        self.state = TaskState.DONE
         if self._start_date == None:
             self._start_date = datetime.now()
         self._done_date = datetime.now()
 
-    def _date_string(self, date):
+    def _dateString(self, date):
         s = str(date).split(' ')
         time = s[1][:8]
         return s[0] + ' ' + time
 
-    def get_state():
-        return self._state
+    def getState():
+        return self.state
 
     def __str__(self):
         if self._done_date != None:
-            return (self.task_name + " : " + str(self._state) + " started: "
-            + self._date_string(self._start_date)
-            + " Finished " + self._date_string(self._done_date))
+            return (self.name + " : " + str(self.state) + " started: "
+            + self._dateString(self._start_date)
+            + " Finished " + self._dateString(self._done_date))
         elif self._start_date != None:
-            return (self.task_name + " : " + str(self._state) + " started: "
-            + self._date_string(self._start_date))
+            return (self.name + " : " + str(self.state) + " started: "
+            + self._dateString(self._start_date))
         else:
-            return (self.task_name + " : " + str(self._state) + " proposed: "
-            + self._date_string(self._proposed_date))
+            return (self.name + " : " + str(self.state) + " proposed: "
+            + self._dateString(self._proposed_date))
 
 
 class TaskState(Enum):

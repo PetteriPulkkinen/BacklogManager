@@ -5,10 +5,11 @@ Date 6.6.2018
 This file is used to contain main funtion for program execution
 '''
 
-from manager_core import *
+from manager_gui import *
+import sys
+from PyQt5.QtWidgets import QApplication
 
-m = Manager()
-
+'''
 def getUserInput():
     inp = input("Command: ").split(' ')
     cmd = inp[0]
@@ -35,25 +36,12 @@ def getUserInput():
         return 0
 
     return True
+    '''
 
 if __name__ == '__main__':
-    '''
+
     app = QApplication(sys.argv)
 
-    soft = Manager()
+    gui = ManagerGUI()
 
     sys.exit(app.exec_())
-    '''
-    task1 = Task("task1")
-    task2 = Task("task2")
-    task3 = Task("task3")
-    task1.propose_task()
-    task2.start_task()
-    task3.finish_task()
-    m.backlog.add_task(task1)
-    m.backlog.add_task(task2)
-    m.backlog.add_task(task3)
-    while(getUserInput()):
-        print("nice")
-
-    exit(0)
