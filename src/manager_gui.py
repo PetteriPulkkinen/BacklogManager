@@ -6,15 +6,23 @@ This file is used to contain graphical user interface components
 for the application
 '''
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QListView, QLabel
+from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QListWidget, QLabel, QListWidgetItem
+import PyQt5.QtWidgets
+from manager_core import Manager
 
-class ManagerGUI(QMainWindow):
+
+class ManagerGUI(Manager, QMainWindow):
     def __init__(self):
         super(ManagerGUI,self).__init__()
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle("Backlog Manager")
-        self.setCentralWidget(WidgetContainer())
+        self.container = WidgetContainer()
+        self.setCentralWidget(self.container)
         self.show()
+
+    def update(self):
+        states = self.backlog.get_all_states()
 
 
 class WidgetContainer(QWidget):
@@ -45,10 +53,15 @@ class StateWidget(QWidget):
 
     def _set_widgets(self):
         self.label = QLabel(self.name)
-        self.items = QListView()
+        self.items = QListWidget()
+        item = QListWidgetItem("Item 1")
 
     def _set_layout(self):
         self.vbox = QVBoxLayout()
         self.vbox.addWidget(self.label)
         self.vbox.addWidget(self.items)
         self.setLayout(self.vbox)
+
+class TaskWidget(QListWidgetItem):
+    def __init__(self, name):
+        super(TaskWidget, self).__init__()
