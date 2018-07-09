@@ -5,38 +5,37 @@ Date 6.6.2018
 This file is used to contain main funtion for program execution
 '''
 
-from manager_gui import *
 import sys
 from PyQt5.QtWidgets import QApplication
+from manager_gui import ManagerGUI, TaskWidget
 
-'''
-def getUserInput():
+
+def getUserInput(m):
     inp = input("Command: ").split(' ')
     cmd = inp[0]
-    arg = ""
     try:
         arg1 = inp[1]
         arg2 = inp[2]
-    except:
+    except IndexError:
         pass
     if cmd == 'p':
-        m.backlog.print_items()
+        m.bl_widget.printTasks()
     elif cmd == 'a':
-        m.backlog.add_task(Task(arg1))
+        m.bl_widget.addTask(TaskWidget(arg1))
     elif cmd == 'c':
         if arg2 == '0':
-            m.backlog.get_task(arg1).propose_task()
+            m.bl_widget.getTask(arg1).proposeTask()
         if arg2 == '1':
-            m.backlog.get_task(arg1).start_task()
+            m.bl_widget.getTask(arg1).startTask()
         elif arg2 == '2':
-            m.backlog.get_task(arg1).finish_task()
+            m.bl_widget.getTask(arg1).finishTask()
     elif cmd == 'd':
-        m.backlog.remove_task(arg1)
+        m.bl_widget.removeTask(arg1)
     else:
         return 0
 
     return True
-    '''
+
 
 if __name__ == '__main__':
 

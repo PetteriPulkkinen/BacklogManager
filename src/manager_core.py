@@ -7,6 +7,7 @@
 
 from enum import Enum
 from datetime import datetime
+import pprint
 
 
 class Backlog(object):
@@ -14,27 +15,24 @@ class Backlog(object):
         Backlog is a container class for the tasks.
     '''
     def __init__(self):
-        self.state_dict = {TaskState.PROPOSED : {}, TaskState.STARTED : {}, 
-        TaskState.DONE : {}}
+        self.task_list = []
 
     def getTask(self, name):
-        for key, task_dict in self.state_dict.items():
-            if name in task_dict:
-                return task_dict[name]
+        for task in self.task_list:
+            if task.name == name:
+                return task
         return None
 
     def addTask(self, task):
-        self.state_dict[task.state] = {task.name : task}
-        print("Add task")
+        self.task_list.append(task)
 
     def removeTask(self, name):
-        for key, task_dict in self.state_dict:
-            del task_dict[name]
+        task = self.getTask(name)
+        self.task_list.remove(task)
 
-    def printItems(self):
-        for key, task_dict in self.state_dict.items():
-            for key, task in task_dict.items():
-                print(task)
+    def printTasks(self):
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(self.task_list)
 
 
 class Task(object):
@@ -61,7 +59,7 @@ class Task(object):
 
     def finishTask(self):
         self.state = TaskState.DONE
-        if self._start_date == None:
+        if self._start_date is None:
             self._start_date = datetime.now()
         self._done_date = datetime.now()
 
@@ -70,20 +68,17 @@ class Task(object):
         time = s[1][:8]
         return s[0] + ' ' + time
 
-    def getState():
-        return self.state
-
     def __str__(self):
-        if self._done_date != None:
+        if self._done_date is not None:
             return (self.name + " : " + str(self.state) + " started: "
-            + self._dateString(self._start_date)
-            + " Finished " + self._dateString(self._done_date))
-        elif self._start_date != None:
+                    + self._dateString(self._start_date)
+                                + " Finished " + self._dateString(self._done_date))
+        elif self._start_date is not None:
             return (self.name + " : " + str(self.state) + " started: "
-            + self._dateString(self._start_date))
+                    + self._dateString(self._start_date))
         else:
             return (self.name + " : " + str(self.state) + " proposed: "
-            + self._dateString(self._proposed_date))
+                    + self._dateString(self._proposed_date))
 
 
 class TaskState(Enum):

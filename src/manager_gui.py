@@ -8,8 +8,7 @@ for the application
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QVBoxLayout
 from PyQt5.QtWidgets import QListWidget, QLabel, QListWidgetItem
-import PyQt5.QtWidgets
-from manager_core import *
+from manager_core import Backlog, Task, TaskState
 
 
 class ManagerGUI(QMainWindow):
@@ -26,34 +25,39 @@ class ManagerGUI(QMainWindow):
 class BacklogWidget(QWidget, Backlog):
     def __init__(self):
         super(BacklogWidget, self).__init__()
-
-        self.addTask(Task("task1"))
-        self.addTask(Task("task2"))
-        self.addTask(Task("task3"))
-        self.getTask("task3").startTask()
-
-        self.state_widgets = {}
+        self.t1 = TaskWidget("task1")
+        self.t2 = TaskWidget("task2")
+        self.t3 = TaskWidget("task3")
+        self.addTask(self.t1)
+        self.addTask(self.t2)
+        self.addTask(self.t3)
+        self.state_widgets = []
 
     def init(self):
-        self._initListWidgets()
+        self._initStateWidgets()
         self._initTaskWidgets()
 
-    def _initListWidgets(self):
+    def _initStateWidgets(self):
         self.hbox = QHBoxLayout()
-        for state in self.state_dict:
-            self.state_widgets[state] = StateWidget()
-            self.hbox.addWidget(self.state_widgets[state])
+        for state in list(TaskState):
+            sw = StateWidget(state)
+            self.hbox.addWidget(sw)
+            self.state_widgets.append(sw)
         self.setLayout(self.hbox)
 
     def _initTaskWidgets(self):
-        for state, task_dict in self.state_dict.items():
-            for name in task_dict.keys():
-                self.state_widgets[state].task_list.addItem(TaskWidget(name))
+        for task in self.task_list:
+            self.getStateWidget(task.state).task_list.addItem(task)
 
+    def getStateWidget(self, state):
+        for widget in self.state_widgets:
+            if widget.state is state:
+                return widget
+        return None
 
 
 class StateWidget(QWidget):
-    def __init__(self):
+    def __init__(self, state):
         super(StateWidget, self).__init__()
         self.vbox = QVBoxLayout()
         self.task_list = QListWidget()
@@ -61,9 +65,11 @@ class StateWidget(QWidget):
         self.vbox.addWidget(self.label)
         self.vbox.addWidget(self.task_list)
         self.setLayout(self.vbox)
+        self.state = state
 
 
-class TaskWidget(QListWidgetItem):
+class TaskWidget(Task, QListWidgetItem):
     def __init__(self, name):
-        super(TaskWidget, self).__init__(name)
-        self.name = name
+        QListWidgetItem.__init__(self, name)
+        Task.__init__(self, name)
+        print("TaskWidget")
