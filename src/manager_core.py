@@ -69,16 +69,9 @@ class Task(object):
         return s[0] + ' ' + time
 
     def __str__(self):
-        if self._done_date is not None:
-            return (self.name + " : " + str(self.state) + " started: "
-                    + self._dateString(self._start_date)
-                                + " Finished " + self._dateString(self._done_date))
-        elif self._start_date is not None:
-            return (self.name + " : " + str(self.state) + " started: "
-                    + self._dateString(self._start_date))
-        else:
-            return (self.name + " : " + str(self.state) + " proposed: "
-                    + self._dateString(self._proposed_date))
+        s = "{} : {} || propose : {} ||  start: {} || done: {}"
+        return s.format(self.name, self.state, self._proposed_date,
+                        self._start_date, self._done_date)
 
 
 class TaskState(Enum):
