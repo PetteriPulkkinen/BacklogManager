@@ -31,8 +31,8 @@ class Backlog(object):
         self.task_list.remove(task)
 
     def printTasks(self):
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(self.task_list)
+        for task in self.task_list:
+            print(task)
 
 
 class Task(object):
