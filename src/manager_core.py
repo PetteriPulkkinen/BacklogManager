@@ -7,7 +7,6 @@
 
 from enum import Enum
 from datetime import datetime
-import pprint
 
 
 class Backlog(object):
@@ -46,22 +45,30 @@ class Task(object):
         self._start_date = None
         self._done_date = None
 
-    def proposeTask(self):
+    def _proposeTask(self):
         self.state = TaskState.PROPOSED
         self._proposed_date = datetime.now()
         self._start_date = None
         self._done_date = None
 
-    def startTask(self):
+    def _startTask(self):
         self.state = TaskState.STARTED
         self._start_date = datetime.now()
         self._done_date = None
 
-    def finishTask(self):
+    def _finishTask(self):
         self.state = TaskState.DONE
         if self._start_date is None:
             self._start_date = datetime.now()
         self._done_date = datetime.now()
+
+    def changeState(self, state):
+        if state == TaskState.DONE:
+            self._finishTask()
+        elif state == TaskState.STARTED:
+            self._startTask()
+        elif state == TaskState.PROPOSED:
+            self._proposeTask()
 
     def _dateString(self, date):
         s = str(date).split(' ')

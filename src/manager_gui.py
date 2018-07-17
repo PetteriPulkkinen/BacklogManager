@@ -61,17 +61,17 @@ class CentralWidget(QWidget):
 
     def _leftButtonClicked(self):
         task = self.backlog_widget.getActiveTask()
-        task.changeTaskState(task, False)
+        self.backlog_widget.changeTaskState(task, -1)
 
     def _rightButtonClicked(self):
         task = self.backlog_widget.getActiveTask()
-        task.changeTaskState(task, True)
+        self.backlog_widget.changeTaskState(task, 1)
 
     def _addButtonClicked(self):
         text, ok = QInputDialog.getText(self, 'Input task name', 'Add task')
         if ok:
             print('Add task with name: {}'.format(text))
-            self.backlog_widget.addTaskWidget(text)
+            self.backlog_widget.addTaskWidget(TaskWidget(text))
         else:
             print('Task not added!')
 
@@ -85,7 +85,7 @@ class BacklogWidget(QWidget, Backlog):
     def __init__(self):
         super(BacklogWidget, self).__init__()
         t2 = TaskWidget('task2')
-        t2.finishTask()
+        t2._finishTask()
         self.addTask(TaskWidget('task1'))
         self.addTask(t2)
         self.addTask(TaskWidget('task3'))
@@ -95,17 +95,21 @@ class BacklogWidget(QWidget, Backlog):
         self._initTaskWidgets()
 
     def addTaskWidget(self, task):
-        raise NotImplementedError
+        self.addTask(task)
+        sw = self._getStateWidget(task.state)
+        sw.addItem(task)
 
-    def changeTaskState(self, task, state):
-        raise NotImplementedError
+    def changeTaskState(self, task, direction):
+        self.removeTaskWidget(task)
+        task.changeState(TaskState(task.state.value + direction))
+        self.addTaskWidget(task)
+        print(self.printTasks())
 
     def removeTaskWidget(self, task):
         sw = self._getStateWidget(task.state)
         row = sw.currentRow()
         sw.takeItem(row)
         self.removeTask(task.name)
-        self.printTasks()
 
     def getActiveTask(self):
         sw = self._getStateWidget(self._current_state_activated)
