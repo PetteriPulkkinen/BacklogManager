@@ -29,11 +29,16 @@ class CentralWidget(QWidget):
         self.remove_button = QPushButton('Remove')
         self.add_button = QPushButton('Add')
         self.right_button = QPushButton('Right')
+
+        self.left_button.setEnabled(False)
+        self.remove_button.setEnabled(False)
+        self.right_button.setEnabled(False)
+        
         self.left_button.clicked.connect(self._leftButtonClicked)
         self.remove_button.clicked.connect(self._removeButtonClicked)
         self.add_button.clicked.connect(self._addButtonClicked)
         self.right_button.clicked.connect(self._rightButtonClicked)
-        self.backlog_widget = BacklogWidget()
+        self.backlog_widget = BacklogWidget(self)
         self._initLayout()
 
     def _initLayout(self):
@@ -80,9 +85,19 @@ class CentralWidget(QWidget):
         print('Remove button clicked for task: {}'.format(task.name))
         self.backlog_widget.removeTaskWidget(task)
 
+    def _activateButtons(self, item):
+        if item.state is TaskState.PROPOSED:
+            self.left_button.setEnabled(False)
+        else:
+            self.left_button.setEnabled(True)
+        self.remove_button.setEnabled(True)
+        if item.state is TaskState.DONE:
+            self.right_button.setEnabled(False)
+        else:
+            self.right_button.setEnabled(True)
 
 class BacklogWidget(QWidget, Backlog):
-    def __init__(self):
+    def __init__(self, centralWidget):
         super(BacklogWidget, self).__init__()
         t2 = TaskWidget('task2')
         t2._finishTask()
@@ -93,6 +108,7 @@ class BacklogWidget(QWidget, Backlog):
         self._current_state_activated = None
         self._initStateWidgets()
         self._initTaskWidgets()
+        self._centralWidget = centralWidget
 
     def addTaskWidget(self, task):
         self.addTask(task)
@@ -139,6 +155,8 @@ class BacklogWidget(QWidget, Backlog):
         sw = self._getStateWidget(item.state)
         self._current_state_activated = item.state
         sw.setCurrentItem(item)
+        self._centralWidget._activateButtons(item)
+
 
 
 class StateWidget(QListWidget):
